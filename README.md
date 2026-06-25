@@ -2,22 +2,17 @@
 
 This repository contains the training code for GeoAlign, a geometric alignment fine-tuning framework for DNA foundation models. The public copy is intentionally focused on the runnable training workflow: model loaders, data loaders, classification/regression training scripts, and task-adaptive pre-training helpers.
 
-Plotting scripts, intermediate analysis notebooks, generated CSV files, figure panels, pretrained model weights, and dataset files are not included.
 
 ## What is included
 
 - `models/`: backbone loading utilities and downstream heads for HyenaDNA, NTv3, and Caduceus.
 - `data_loader/`: single-view and dual-view dataset pipelines, including shift and reverse-complement perturbations.
 - `train_classification/`: classification training scripts.
-- `train_regression/`: DeepSTARR-style multi-output regression training scripts.
+- `train_regression/`: regression training scripts.
 - `data/`: preprocessing and TAPT corpus construction scripts plus placeholder directories.
-- `environment_hyenadna_ntv3.yml` and `requirements_hyenadna_ntv3.txt`: a starting environment for HyenaDNA/NTv3 experiments.
-- `environment_caduceus.yml`: placeholder for the separate Caduceus environment.
 
 ## What is not included
 
-- Plotting and manuscript figure-generation code.
-- Early exploratory branches that are not part of the final method.
 - Local dataset files (`*.parquet`, FASTA/TXT activity files, OOD files).
 - Pretrained model weights (`model.safetensors`, `*.bin`, `*.pth`, checkpoints).
 - Training outputs under `checkpoints/` and `logs/`.
@@ -55,17 +50,6 @@ data/
   Drosophila/{train,val,test}.parquet
 ```
 
-Classification parquet files are expected to contain at least:
-
-```text
-sequence, label
-```
-
-DeepSTARR-style regression parquet files are expected to contain at least:
-
-```text
-sequence, Dev_log2_enrichment, Hk_log2_enrichment
-```
 
 ## Configuration style
 
@@ -87,19 +71,13 @@ GeoAlign dual-view classification fine-tuning:
 python train_classification/train_v2_seed.py
 ```
 
-GeoAlign lambda scan for classification:
-
-```bash
-python train_classification/train_v2_lambda_seed.py
-```
-
 Task-adaptive pre-training (TAPT):
 
 ```bash
 python train_classification/train_tapt.py
 ```
 
-Standard fine-tuning / data augmentation baseline for DeepSTARR-style regression:
+Standard fine-tuning / data augmentation baseline for regression:
 
 ```bash
 python train_regression/train_v1_reg_seed.py
@@ -142,4 +120,5 @@ Leave it as `None` for ordinary fine-tuning from the local pretrained backbone.
 
 ## Notes for Caduceus
 
-Caduceus depends on a separate Mamba/Caduceus-compatible environment. The placeholder file `environment_caduceus.yml` is intentionally left incomplete so the exact CUDA, PyTorch, `mamba-ssm`, and compiler versions can be filled in according to the machine used for training.
+Caduceus depends on a separate Mamba/Caduceus-compatible environment. 
+
