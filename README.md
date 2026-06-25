@@ -49,8 +49,10 @@ data/
   splice_sites_all/{train_split,val,test}.parquet
   Drosophila/{train,val,test}.parquet
 ```
-
-
+We provide a script for you to quickly split the training set and validation set(data_splice_to_train_val.py)
+The binary classification task is mainly provided by [nucleotide_transformer_downstream_tasks_revised](https://huggingface.co/datasets/InstaDeepAI/nucleotide_transformer_downstream_tasks_revised)
+The regression task is mainly provided by [deepstarr](https://zenodo.org/records/5502060)
+We also provide a script to process the data provided by DeepStarr and transform it into a format suitable for the current training code(preprocess_deepstarr.py)
 ## Configuration style
 
 The scripts use an editable configuration block at the top of each file. To run a different model, task, seed list, perturbation setting, learning rate, batch size, or local checkpoint path, edit the `CONFIG`, `MODEL_PATHS`, and seed-list variables directly.
