@@ -1,6 +1,6 @@
 # Data placeholders
 
-This directory contains only preprocessing scripts and placeholder folders. Dataset files are intentionally excluded from the GitHub-ready copy.
+This directory contains only preprocessing scripts and placeholder folders. 
 
 Expected classification files:
 
@@ -13,7 +13,7 @@ Expected columns:
 - `sequence`: DNA sequence string
 - `label`: integer class label
 
-Expected DeepSTARR-style regression files:
+Expected regression files:
 
 - `train.parquet`
 - `val.parquet`
