@@ -122,5 +122,52 @@ Leave it as `None` for ordinary fine-tuning from the local pretrained backbone.
 
 ## Notes for Caduceus
 
-Caduceus depends on a separate Mamba/Caduceus-compatible environment. 
+Caduceus depends on a separate Mamba/Caduceus-compatible environment. Due to frequent compatibility issues when configuring the Mamba environment across different devices, we recommend using prebuilt .whl files to ensure reproducibility. Before setting up the environment, please make sure that the .whl files for [causal_conv1d](https://github.com/Dao-AILab/causal-conv1d/releases/download/v1.2.0.post2/causal_conv1d-1.2.0.post2+cu118torch2.1cxx11abiFALSE-cp38-cp38-linux_x86_64.whl) and [mamba_ssm](https://github.com/state-spaces/mamba/releases/download/v1.2.0.post1/mamba_ssm-1.2.0.post1+cu118torch2.1cxx11abiFALSE-cp38-cp38-linux_x86_64.whl) have already been downloaded to the current directory.
 
+## Environment Configuration
+for hyenadna and ntv3, Please execute the following commands in sequence on the console
+
+```bash
+conda create -n hyenadna-ntv3 python=3.10 pip -y
+conda activate hyenadna-ntv3
+
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+
+pip install \
+  transformers \
+  peft \
+  accelerate \
+  safetensors \
+  numpy \
+  pandas \
+  scipy \
+  scikit-learn \
+  tqdm \
+  pyarrow
+```
+If you are unable to install CUDA 12.6, you may try installing another CUDA version that is available in your environment. We have tested CUDA 12.1, CUDA 12.6, and CUDA 12.8, and all of them are compatible.
+
+for caduceus, Please ensure that the causal_conv1d and mamba_ssm WHL files are downloaded to the current directory, and then execute the following commands in sequence on the console
+
+```bash
+conda create --name caduceus python=3.8
+conda activate caduceus
+
+conda install -y pytorch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 pytorch-cuda=11.8  -c pytorch -c nvidia
+
+pip install \
+  transformers \
+  peft \
+  accelerate \
+  safetensors \
+  numpy \
+  pandas \
+  scipy \
+  scikit-learn \
+  tqdm \
+  pyarrow
+
+pip install causal_conv1d-1.2.0.post2+cu118torch2.1cxx11abiFALSE-cp38-cp38-linux_x86_64.whl
+pip install mamba_ssm-1.2.0.post1+cu118torch2.1cxx11abiFALSE-cp38-cp38-linux_x86_64.whl
+```
+If you encounter any issues during environment setup or reproduction, please feel free to contact us.
