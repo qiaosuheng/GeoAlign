@@ -1,0 +1,145 @@
+# GeoAlign fine-tuning code
+
+This repository contains the training code for GeoAlign, a geometric alignment fine-tuning framework for DNA foundation models. The public copy is intentionally focused on the runnable training workflow: model loaders, data loaders, classification/regression training scripts, and task-adaptive pre-training helpers.
+
+Plotting scripts, intermediate analysis notebooks, generated CSV files, figure panels, pretrained model weights, and dataset files are not included.
+
+## What is included
+
+- `models/`: backbone loading utilities and downstream heads for HyenaDNA, NTv3, and Caduceus.
+- `data_loader/`: single-view and dual-view dataset pipelines, including shift and reverse-complement perturbations.
+- `train_classification/`: classification training scripts.
+- `train_regression/`: DeepSTARR-style multi-output regression training scripts.
+- `data/`: preprocessing and TAPT corpus construction scripts plus placeholder directories.
+- `environment_hyenadna_ntv3.yml` and `requirements_hyenadna_ntv3.txt`: a starting environment for HyenaDNA/NTv3 experiments.
+- `environment_caduceus.yml`: placeholder for the separate Caduceus environment.
+
+## What is not included
+
+- Plotting and manuscript figure-generation code.
+- Early exploratory branches that are not part of the final method.
+- Local dataset files (`*.parquet`, FASTA/TXT activity files, OOD files).
+- Pretrained model weights (`model.safetensors`, `*.bin`, `*.pth`, checkpoints).
+- Training outputs under `checkpoints/` and `logs/`.
+
+## Expected local layout
+
+Before running training, place local model files and data files under the paths referenced by the configuration blocks in each script.
+
+```text
+models/
+  hyenadna-small-32k-seqlen-hf/
+    config.json
+    modeling_hyena.py
+    tokenization_hyena.py
+    model.safetensors              # user-provided
+  NTv3_8M_pre/
+    config.json
+    modeling_ntv3_pretrained.py
+    tokenization_ntv3.py
+    model.safetensors              # user-provided
+  caduceus-ps_seqlen-131k_d_model-256_n_layer-16/
+    config.json
+    modeling_caduceus.py
+    tokenization_caduceus.py
+    model.safetensors              # user-provided
+
+data/
+  H3K27me3/{train_split,val,test}.parquet
+  H3K36me3/{train_split,val,test}.parquet
+  enhancers/{train_split,val,test}.parquet
+  promoter_all/{train_split,val,test}.parquet
+  splice_sites_acceptors/{train_split,val,test}.parquet
+  splice_sites_donors/{train_split,val,test}.parquet
+  splice_sites_all/{train_split,val,test}.parquet
+  Drosophila/{train,val,test}.parquet
+```
+
+Classification parquet files are expected to contain at least:
+
+```text
+sequence, label
+```
+
+DeepSTARR-style regression parquet files are expected to contain at least:
+
+```text
+sequence, Dev_log2_enrichment, Hk_log2_enrichment
+```
+
+## Configuration style
+
+The scripts use an editable configuration block at the top of each file. To run a different model, task, seed list, perturbation setting, learning rate, batch size, or local checkpoint path, edit the `CONFIG`, `MODEL_PATHS`, and seed-list variables directly.
+
+This matches the internal workflow used for the manuscript and avoids long command-line argument strings.
+
+## Main training scripts
+
+Standard fine-tuning / data augmentation baseline for classification:
+
+```bash
+python train_classification/train_v1_seed.py
+```
+
+GeoAlign dual-view classification fine-tuning:
+
+```bash
+python train_classification/train_v2_seed.py
+```
+
+GeoAlign lambda scan for classification:
+
+```bash
+python train_classification/train_v2_lambda_seed.py
+```
+
+Task-adaptive pre-training (TAPT):
+
+```bash
+python train_classification/train_tapt.py
+```
+
+Standard fine-tuning / data augmentation baseline for DeepSTARR-style regression:
+
+```bash
+python train_regression/train_v1_reg_seed.py
+```
+
+GeoAlign dual-view regression fine-tuning:
+
+```bash
+python train_regression/train_v2_reg_seed.py
+```
+
+## Perturbation controls
+
+For standard single-view training scripts, perturbations are controlled by:
+
+```python
+"aug_shift": True or False
+"aug_rc": True or False
+```
+
+For GeoAlign dual-view training scripts, perturbations are controlled by:
+
+```python
+"use_shift": True or False
+"use_rc": True or False
+"lambda_align": 1.0
+```
+
+In the combined `shift + RC` dual-view setting, the perturbed view is sampled from shift-only, RC-only, and shift+RC transformations according to the logic in `data_loader/data_loader_dual.py`.
+
+## Local TAPT checkpoints
+
+If a downstream run should initialize from a TAPT checkpoint, set:
+
+```python
+"foundation_ckpt": "checkpoints/.../tapt_hyenadna_last.pth"
+```
+
+Leave it as `None` for ordinary fine-tuning from the local pretrained backbone.
+
+## Notes for Caduceus
+
+Caduceus depends on a separate Mamba/Caduceus-compatible environment. The placeholder file `environment_caduceus.yml` is intentionally left incomplete so the exact CUDA, PyTorch, `mamba-ssm`, and compiler versions can be filled in according to the machine used for training.
