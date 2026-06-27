@@ -17,7 +17,7 @@ This repository contains the training code for GeoAlign, a geometric alignment f
 - Pretrained model weights (`model.safetensors`, `*.bin`, `*.pth`, checkpoints).
 - Training outputs under `checkpoints/` and `logs/`.
 
-All datasets used for fine-tuning are publicly available. Please download them and place them in the corresponding directories as described below. The processed mouse datasets constructed in this study will be released upon acceptance of the manuscript.
+All datasets used for fine-tuning are publicly available([deepstarr](https://zenodo.org/records/5502060),[nucleotide_transformer_downstream_tasks_revised](https://huggingface.co/datasets/InstaDeepAI/nucleotide_transformer_downstream_tasks_revised)). Please download them and place them in the corresponding directories as described below. The processed mouse datasets constructed in this study will be released upon acceptance of the manuscript.
 Pretrained backbone weights are not included in this repository. Please download them from the corresponding official open-source repositories.
 
 ## Expected local layout
